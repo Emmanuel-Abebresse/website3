@@ -20,18 +20,38 @@
             margin: 0 auto;
         }
 
-        /* ── FAQ accordion ── */
-        .faq-answer { display: none; padding: 0 0 16px; }
-        .faq-item.open .faq-answer { display: block; }
-        .faq-icon { transition: transform 0.25s ease; flex-shrink: 0; }
+        /* ── FAQ accordion — !important overrides contact.css constraints ── */
+        .faq-answer {
+            display: block !important;
+            max-height: 0 !important;
+            overflow: hidden !important;
+            opacity: 0;
+            transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            padding: 0 !important;
+            visibility: visible !important;
+        }
+        .faq-answer p {
+            margin: 0;
+            padding-bottom: 20px;
+            font-size: 15px;
+            line-height: 1.8;
+            color: inherit;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 800px !important;
+            opacity: 1;
+            padding-top: 12px !important;
+        }
+        .faq-icon { transition: transform 0.3s ease; flex-shrink: 0; }
         .faq-item.open .faq-icon { transform: rotate(180deg); }
         .faq-question {
-            display: flex;
+            display: flex !important;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
             gap: 12px;
-            padding: 4px 0;
+            padding: 6px 0;
+            user-select: none;
         }
 
         /* ── Form feedback ── */
@@ -148,14 +168,14 @@
                         </div>
                     </a>
 
-                    <a href="/cdn-cgi/l/email-protection#682a0d0a12115958280f05090104460b0705" class="quick-contact-item">
+                    <a href="/cdn-cgi/l/email-protection#672502051d1e565727000a060e0b4904080a" class="quick-contact-item">
                         <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                             <polyline points="22,6 12,13 2,6"></polyline>
                         </svg>
                         <div class="contact-info">
                             <span class="label">Email</span>
-                            <span class="value"><span class="__cf_email__" data-cfemail="2f6d4a4d55561e1f6f48424e4643014c4042">bebzy10@gmail.com</span></span>
+                            <span class="value"><span class="__cf_email__" data-cfemail="d193b4b3aba8e0e191b6bcb0b8bdffb2bebc">bebzy10@gmail.com</span></span>
                         </div>
                     </a>
                 </div>
@@ -336,7 +356,7 @@
 
                 <div class="footer-section">
                     <h3>Email</h3>
-                    <p><a href="/cdn-cgi/l/email-protection#aceec9ced6d59d9ceccbc1cdc5c082cfc3c1"><span class="__cf_email__" data-cfemail="387a5d5a42410908785f55595154165b5755">bebzy10@gmail.com</span></a></p>
+                    <p><a href="/cdn-cgi/l/email-protection#b1f3d4d3cbc88081f1d6dcd0d8dd9fd2dedc"><span class="__cf_email__" data-cfemail="fbb99e998182cacbbb9c969a9297d5989496">bebzy10@gmail.com</span></a></p>
                 </div>
 
                 <div class="footer-section">
@@ -400,7 +420,7 @@
             });
         }
 
-        // ── Contact form — Formspree submission ────────────────────
+        // ── Contact form — Formspree ───────────────────────────────
         var form      = document.getElementById('contactForm');
         var formMsg   = document.getElementById('formMessage');
         var submitBtn = form ? form.querySelector('.submit-btn') : null;
@@ -430,18 +450,14 @@
                     return;
                 }
 
-                // Loading state
                 if (btnText)    btnText.style.display    = 'none';
                 if (btnIcon)    btnIcon.style.display    = 'none';
                 if (btnLoading) btnLoading.style.display = 'inline-flex';
                 submitBtn.disabled = true;
 
-                // Build form data for Formspree
-                var data = new FormData(form);
-
                 fetch('https://formspree.io/f/xbdazkko', {
                     method: 'POST',
-                    body: data,
+                    body: new FormData(form),
                     headers: { 'Accept': 'application/json' }
                 })
                 .then(function (response) {
@@ -449,17 +465,16 @@
                     if (btnIcon)    btnIcon.style.display    = '';
                     if (btnLoading) btnLoading.style.display = 'none';
                     submitBtn.disabled = false;
-
                     if (response.ok) {
                         formMsg.className = 'success';
                         formMsg.textContent = "Message sent! I'll be in touch within 24 hours.";
                         form.reset();
                         if (charCount) charCount.textContent = '0';
                     } else {
-                        return response.json().then(function (data) {
+                        response.json().then(function (data) {
                             formMsg.className = 'error';
                             formMsg.textContent = (data && data.errors)
-                                ? data.errors.map(function(e){ return e.message; }).join(', ')
+                                ? data.errors.map(function (err) { return err.message; }).join(', ')
                                 : 'Something went wrong. Please try again or email me directly.';
                         });
                     }
@@ -475,7 +490,7 @@
             });
         }
 
-        // ── FAQ accordion ──────────────────────────────────────────
+        // ── FAQ accordion — class toggle only, CSS handles the rest ─
         document.querySelectorAll('.faq-question').forEach(function (q) {
             q.addEventListener('click', function () {
                 var item   = this.closest('.faq-item');
