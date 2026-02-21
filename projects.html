@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROJECTS | Emmanuel Abebresse</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="pages.css">
+    <link rel="stylesheet" href="projects.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ===== MODAL OVERLAY ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.82);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+
+        /* ===== MODAL BOX ===== */
+        .modal-box {
+            background: #0f0f0f;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            max-width: 860px;
+            width: 100%;
+            max-height: 92vh;
+            overflow-y: auto;
+            position: relative;
+            animation: modalIn 0.3s ease;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255,255,255,0.15) transparent;
+        }
+        .modal-box::-webkit-scrollbar { width: 5px; }
+        .modal-box::-webkit-scrollbar-track { background: transparent; }
+        .modal-box::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+        @keyframes modalIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ===== MODAL HERO IMAGE ===== */
+        .modal-hero-img {
+            width: 100%;
+            height: 260px;
+            object-fit: cover;
+            border-radius: 16px 16px 0 0;
+            display: block;
+        }
+        .modal-hero-placeholder {
+            width: 100%;
+            height: 180px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01));
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+        }
+        .modal-hero-placeholder span {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            color: rgba(255,255,255,0.18);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* ===== MODAL HEADER ===== */
+        .modal-header {
+            padding: 26px 36px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            position: sticky;
+            top: 0;
+            background: #0f0f0f;
+            z-index: 1;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+        .modal-header-text .modal-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .modal-header-text .modal-tag {
+            font-family: 'DM Sans', sans-serif;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.07);
+            color: #aaa;
+        }
+        .modal-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            font-weight: 800;
+            color: #fff;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .modal-close {
+            background: rgba(255,255,255,0.07);
+            border: none;
+            color: #fff;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: background 0.2s;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.15); }
+
+        /* ===== MODAL BODY ===== */
+        .modal-body {
+            padding: 28px 36px 40px;
+            font-family: 'DM Sans', sans-serif;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.8;
+        }
+        .modal-meta-row {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-bottom: 28px;
+            padding: 14px 20px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .modal-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: rgba(255,255,255,0.6);
+        }
+        .modal-meta-item svg { width: 15px; height: 15px; stroke: currentColor; flex-shrink: 0; }
+
+        /* ===== IMAGE COMPONENTS =====
+           These classes are used by the JS renderer.
+           You can tweak sizes/border-radius here globally.
+        ============================= */
+
+        /* Full-width image — contain so no whitespace crops */
+        .img-full {
+            width: 100%;
+            max-height: 580px;
+            border-radius: 10px;
+            display: block;
+            margin: 18px 0 6px;
+            object-fit: contain;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        /* Portrait / tall map — wider, fully visible */
+        .img-portrait {
+            max-width: 560px;
+            width: 100%;
+            margin: 18px auto 6px;
+            border-radius: 10px;
+            display: block;
+            object-fit: contain;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        /* 2-column grid — auto height so tall maps show fully */
+        .img-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 18px 0 6px;
+            align-items: start;
+        }
+        .img-grid-2 img {
+            width: 100%;
+            border-radius: 8px;
+            object-fit: contain;
+            background: rgba(255,255,255,0.02);
+            display: block;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .img-grid-2 > div {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        /* 3-column grid */
+        .img-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin: 18px 0 6px;
+            align-items: start;
+        }
+        .img-grid-3 img {
+            width: 100%;
+            border-radius: 8px;
+            object-fit: contain;
+            background: rgba(255,255,255,0.02);
+            display: block;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+        .img-grid-3 > div {
+            width: 100%;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.07);
+        }
+
+        /* Inline right */
+        .img-inline-right {
+            float: right;
+            width: 44%;
+            margin: 4px 0 14px 20px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid rgba(255,255,255,0.07);
+            display: block;
+        }
+        /* Inline left */
+        .img-inline-left {
+            float: left;
+            width: 44%;
+            margin: 4px 20px 14px 0;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid rgba(255,255,255,0.07);
+            display: block;
+        }
+        .clearfix::after { content: ''; display: table; clear: both; }
+
+        /* Image caption */
+        .img-caption {
+            font-size: 12px;
+            color: rgba(255,255,255,0.32);
+            text-align: center;
+            margin: 0 0 18px;
+            font-style: italic;
+            letter-spacing: 0.02em;
+        }
+
+        /* Placeholder box (shown while real image not yet added) */
+        .img-placeholder {
+            width: 100%;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            border: 2px dashed rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 36px 20px;
+            margin: 18px 0 6px;
+            box-sizing: border-box;
+        }
+        .img-placeholder.compact { padding: 18px 10px; }
+        .img-placeholder svg { width: 28px; height: 28px; stroke: rgba(255,255,255,0.18); }
+        .img-placeholder span {
+            font-size: 12px;
+            color: rgba(255,255,255,0.22);
+            font-style: italic;
+            letter-spacing: 0.04em;
+            text-align: center;
+        }
+
+        /* Section heading inside body */
+        .modal-section-heading {
+            font-family: 'Syne', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: rgba(255,255,255,0.35);
+            margin: 28px 0 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.07);
+        }
+
+        @media (max-width: 600px) {
+            .modal-body { padding: 18px 18px 32px; }
+            .modal-header { padding: 18px 18px 16px; }
+            .img-grid-2, .img-grid-3 { grid-template-columns: 1fr; }
+            .img-inline-right, .img-inline-left { float: none; width: 100%; margin: 14px 0; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- =================================================================
+     PROJECT ARTICLES — EDIT YOUR CONTENT HERE
+     =================================================================
+
+     IMAGE USAGE CHEAT SHEET
+     ────────────────────────────────────────────────────────────────
+     Add any of these block objects inside a project's content[] array.
+
+     1. FULL-WIDTH IMAGE (landscape maps, screenshots):
+        { type: "image-full",
+          src: "path/to/image.jpg",   ← file path OR web URL
+          alt: "Description",
+          caption: "Fig 1. Caption text (optional)" }
+
+     2. PORTRAIT / TALL MAP (centred, max 440px wide):
+        { type: "image-portrait",
+          src: "path/to/map.jpg",
+          alt: "Map title",
+          caption: "Fig 2. Caption (optional)" }
+
+     3. TWO IMAGES SIDE BY SIDE:
+        { type: "image-grid-2",
+          images: [
+            { src: "left.jpg",  alt: "Left image" },
+            { src: "right.jpg", alt: "Right image" }
+          ],
+          caption: "Fig 3. Shared caption (optional)" }
+
+     4. THREE IMAGES IN A ROW:
+        { type: "image-grid-3",
+          images: [
+            { src: "a.jpg", alt: "A" },
+            { src: "b.jpg", alt: "B" },
+            { src: "c.jpg", alt: "C" }
+          ],
+          caption: "Fig 4. Shared caption (optional)" }
+
+     5. IMAGE FLOATED RIGHT (beside text):
+        { type: "image-inline-right", src: "img.jpg", alt: "Alt text" }
+        — immediately follow with a text block to wrap around it —
+
+     6. IMAGE FLOATED LEFT (beside text):
+        { type: "image-inline-left", src: "img.jpg", alt: "Alt text" }
+
+     7. PLACEHOLDER (marks where an image will go):
+        { type: "image-placeholder", label: "Insert risk map here" }
+
+     PATH TIPS:
+     • Local file  →  "files/my-map.jpg"  or  "C:/Users/.../map.jpg"
+     • Web URL     →  "https://example.com/map.png"
+     • Use "PLACEHOLDER" as src to show a dashed box until ready.
+     =================================================================
+-->
+<script>
+const PROJECT_ARTICLES = {
+
+    // ──────────────────────────────────────────────────────────────
+    // PROJECT 1 — Fire Risk Assessment for Shasta County, USA
+    // ──────────────────────────────────────────────────────────────
+    project1: {
+        title: "Fire Risk Assessment for Shasta County, California",
+        tags: ["GIS Analysis", "Remote Sensing"],
+        tools: "ArcGIS Pro, California State Data, NIFC, NLCD",
+        duration: "2 months",
+
+        heroImage: "images/fire-fighters-at-forest-fire-c-quarrie-photography.jpg",
+        heroAlt:   "Wildfire in Shasta County, California",
+
+        content: [
+            { type: "section-heading", value: "Project Overview" },
+            { type: "text", value: "This project used GIS to spatially map residential buildings in Shasta County, California falling within the Wildland-Urban Interface (WUI) zone — the critical boundary where human development meets wildland vegetation. By identifying structures at heightened wildfire risk, the analysis provides a spatial evidence base for fire risk management, land-use planning, and infrastructure protection in one of California's most fire-prone counties." },
+
+            { type: "section-heading", value: "Background" },
+            { type: "text", value: "A wildfire is an accidental, uncontrolled fire in vegetated areas that may arise from natural or human sources, spreading quickly over large areas and causing harm to ecosystems, communities, and economic resources — often demanding significant firefighting intervention. The Wildland-Urban Interface (WUI) is the zone of transition between unoccupied land and human development: the line, area, or zone where structures and other human development meet or intermingle with undeveloped wildland or vegetative fuels. Two WUI types are recognised — Intermix WUI, where housing and vegetation are interspersed, and Interface WUI, where development abuts a wildland area." },
+
+            { type: "section-heading", value: "Study Area" },
+            { type: "text", value: "Shasta County is located in northern California, a region characterised by extensive forested landscapes including deciduous forest, evergreen forest, and mixed forest. The county sits within one of the highest wildfire-frequency zones in the United States, making it an important case study for assessing residential exposure to fire risk." },
+
+            // ↓ Replace with your California wildfire incidents location map (right map from poster)
+            { type: "image-full", src: "images/cali_fire_risk_map_with_shasta_county.jpg", alt: "Map of wildfire incidents in California with Shasta County highlighted",
+              caption: "Fig 1. Wildfire incidents across California — Shasta County highlighted (Scale 1:5,000,000, WGS 1984 Web Mercator). Data: NIFC, CA State Boundary." },
+
+            { type: "section-heading", value: "Methodology" },
+            { type: "list", items: [
+                "Loaded California State boundary, county boundaries, wildfire incident points, building footprints, and land cover data into ArcGIS Pro.",
+                "Opened the Counties attribute table to select Shasta County and exported the selection as a new standalone layer.",
+                "Clipped wildfire incidents, building footprints, and land cover data to the Shasta County boundary using the Clip tool.",
+                "Used the Select tool to extract forest regions (deciduous, evergreen, and mixed forest) from the clipped land cover layer.",
+                "Created a 100m buffer around all forested areas to define the Wildland-Urban Interface (WUI) zone.",
+                "Selected all residential buildings falling within the 100m WUI buffer to identify at-risk structures.",
+                "Used the total number of buildings identified and an average property value of $450,000 per building to calculate estimated economic exposure."
+            ]},
+
+            { type: "section-heading", value: "WUI Risk Map" },
+            { type: "text", value: "The main output map displays Shasta County's forest cover — classified into deciduous, evergreen, and mixed forest — overlaid with wildfire incident points and residential building footprints. Buildings falling within 100m of forested areas are highlighted, revealing a clear spatial clustering of at-risk structures along forest edges, particularly across the northern and western parts of the county." },
+
+            // ↓ Replace with your main Shasta County WUI risk map (left map from poster)
+            { type: "image-full", src: "images/shasta county wui fire risk map.jpg", alt: "Shasta County WUI fire risk map showing buildings within 100m of forest",
+              caption: "Fig 2. Fire Risk Assessment Map — Shasta County, CA. Buildings within the 100m WUI zone shown against forest land cover classification and wildfire incident points (WGS 1984 Web Mercator)." },
+
+            { type: "section-heading", value: "Results" },
+            { type: "text", value: "The analysis identified 16,746 residential buildings located within the Wildland-Urban Interface of Shasta County — defined as structures situated within 100 metres of forested areas. Given an estimated average property value of $450,000 per building, the total potential economic exposure from wildfire risk is approximately $7.54 billion. This figure underscores the significant financial risk facing the county as residential development increasingly overlaps with wildfire-prone forest landscapes." },
+
+            // ↓ Replace with a zoomed-in detail map or results summary graphic if you have one
+            { type: "image-full", src: "images/shasta.jpg", alt: "Shasta County WUI fire risk map showing buildings within 100m of forest",
+              caption: "Fig 3. Fire Risk Assessment Map — Shasta County, CA. Zoomed Buildings within the 100m WUI zone shown against forest land cover classification and wildfire incident points (WGS 1984 Web Mercator)." },
+
+            { type: "section-heading", value: "Key Outcomes" },
+            { type: "list", items: [
+                "Identified 16,746 residential buildings within the 100m Wildland-Urban Interface zone of Shasta County.",
+                "Calculated a total potential economic loss exposure of approximately $7.54 billion based on average property values.",
+                "Mapped spatial clustering of at-risk buildings along forest edges in the northern and western parts of the county.",
+                "Demonstrated that wildfire risk is elevated through continuous fuel loads, ember-driven ignition, and direct flame exposure within the WUI.",
+                "Highlighted the need for improved land-use planning, vegetation management, and fire-resistant construction standards in WUI areas."
+            ]},
+
+            { type: "section-heading", value: "Conclusion" },
+            { type: "text", value: "The Shasta County fire risk assessment demonstrates how GIS spatial analysis can quantify and visualise wildfire exposure at a county scale. With over 16,700 buildings and $7.54 billion in potential economic loss identified within the WUI, the findings provide a clear evidence base for targeted fire risk management. Human activity near forested areas increases ignition risk while dense vegetation hinders suppression, reinforcing the case for proactive land-use planning, vegetation management strategies, and fire-resilient construction standards in the WUI zone." }
+        ]
+    },
+
+    // ──────────────────────────────────────────────────────────────
+    // PROJECT 2 — West Wittering Historical Land Use
+    // ──────────────────────────────────────────────────────────────
+    project2: {
+        title: "Digitized Map of West Wittering, West Sussex (1846)",
+        tags: ["Cartography", "GIS Analysis"],
+        tools: "ArcGIS Pro, ArcGIS Online",
+        duration: "2 months",
+
+        heroImage: "images/lcm2019.jpg",
+        heroAlt:   "West Wittering land use map",
+
+        content: [
+            { type: "section-heading", value: "Project Overview" },
+            { type: "text", value: "This project digitised and reconstructed the 1846 tithe map of West Wittering, West Sussex — a historic coastal settlement located at approximately 50.781°N, 0.875°W on the western edge of the Manhood Peninsula. The study area covers around 150 hectares of sandy beach, agricultural fields, and the natural sand and shingle spit at the entrance to Chichester Harbour. By combining georeferencing, polygon digitising, and relational attribute joining, the project transformed a historical hardcopy map into a fully attributed GIS dataset for spatial analysis of land use, land ownership, and rent charge patterns." },
+
+            { type: "section-heading", value: "Methodology" },
+            { type: "text", value: "The workflow followed four structured stages. First, the 1846 tithe map was georeferenced to the British National Grid using the aerial mosaic as a base map, with control points added across identifiable features. Second, a new file geodatabase was created and a line feature class used to digitise all field boundaries and parcel edges, with topology rules applied to check and correct linework. Third, the Construct Polygon tool was used to generate closed polygon features from the digitised linework. Finally, non-spatial attribute data from the existing tithe apportionment table — including land use, ownership, and rent charge per acre — were joined to the digitised polygons via a relational join, enabling thematic mapping and spatial analysis." },
+
+            // ↓ Replace with your full methodology / workflow diagram or georeferencing screenshot
+
+            { type: "section-heading", value: "Land Use Analysis" },
+            { type: "text", value: "The West Wittering land use map reveals a predominantly agricultural landscape in 1846. The majority of land is classified as arable, indicating crop cultivation as the primary activity. Surrounding these fields are areas of pasture and meadow reflecting livestock grazing and hay production. Homesteads and buildings cluster along main roads forming small rural settlements, while East Head Spit marks a distinctive coastal feature at the study area's western edge." },
+
+            // ↓ Replace with your land use map (Fig 1 from poster)
+            { type: "image-full", src: "images/WITTERING.jpg", alt: "West Wittering Land Use Map (1846)",
+              caption: "Fig 2. West Wittering Land Use Map (1846) — digitised from tithe apportionment, showing arable, pasture, meadow, buildings, and coastal features (Scale 1:7,000, BNG)" },
+
+            { type: "section-heading", value: "Land Use Composition" },
+            { type: "text", value: "The land use pie chart confirms a strongly agricultural and residential character. Arable land accounts for 30.4% of the study area and buildings for 25.2%, together representing over half of all land. Gardens (12.3%) and pasture (7.9%) reflect the mixed rural character of the settlement, while smaller proportions of wood, meadow, and water indicate limited natural land cover and intensive farming activity across the parish." },
+
+            // ↓ Replace with your land use pie chart image
+            { type: "image-portrait", src: "images/piechart.jpg", alt: "Pie chart of land use West Wittering 1846",
+              caption: "Fig 3. Land use composition — West Wittering (1846). Arable (30.4%) and buildings (25.2%) dominate the parish landscape." },
+
+            { type: "section-heading", value: "Rent Charge per Acre" },
+            { type: "text", value: "The rent charge map reveals clear spatial variation in land value across the study area. Darker reds — representing up to 224.478 pence per acre — cluster near the central part of the land mass, reflecting fertile, high-value farmland in the heart of the parish. Lighter shades (20–108 pence per acre) appear toward the coast, indicating less fertile soils or grazing land, and demonstrating how land productivity shaped economic value across the West Wittering landscape in the mid-nineteenth century." },
+
+            // ↓ Replace with your rent charge per acre map (Fig 2 from poster)
+            { type: "image-full", src: "images/Rent_Per_Acre.jpg", alt: "Rent Charge Per Acre — West Wittering (1846)",
+              caption: "Fig 4. Rent Charge per Acre map — West Wittering (1846). Darker reds indicate high-value central farmland; lighter shades reflect lower-productivity coastal land." },
+
+            { type: "section-heading", value: "Land Ownership" },
+            { type: "text", value: "The land ownership map and bar chart reveal a highly concentrated pattern of landownership in 1846. Gorham dominated with approximately 370 acres, followed by Whitby's Charity with around 145 acres. Francis, Aylmore, and Ide each held roughly 90–110 acres. The majority of other landowners — including Woodman and Teasdale — held under 40 acres each, reflecting the typical Victorian pattern of land concentrated among a small number of major proprietors." },
+
+            // ↓ Replace with your land ownership map and/or bar chart
+            { type: "image-grid-2",
+              images: [
+                { src: "images/WITTERING2.jpg", alt: "West Wittering Land Ownership Map (1846)" },
+                { src: "images/histogram_west_wittering.jpg", alt: "Total acreage by land owner — West Wittering 1846" }
+              ],
+              caption: "Fig 5. Left: West Wittering Land Ownership Map (1846). Right: Total acreage by owner — Gorham dominates with ~370 acres." },
+
+            { type: "section-heading", value: "Key Outcomes" },
+            { type: "list", items: [
+                "Produced a fully georeferenced, topologically correct GIS dataset from the 1846 West Wittering tithe map.",
+                "Mapped and classified land use across 150 hectares, identifying arable (30.4%) as the dominant land use category.",
+                "Spatially analysed rent charge variation, linking higher land values to fertile central farmland and lower values to coastal soils.",
+                "Revealed a concentrated land ownership pattern with Gorham holding ~370 acres — the largest single estate in the parish.",
+                "Delivered publication-quality thematic maps linking historical spatial and non-spatial attribute data through relational joins."
+            ]},
+
+            { type: "section-heading", value: "Conclusion" },
+            { type: "text", value: "This project demonstrated how historical tithe records can be transformed into rich geospatial datasets through careful georeferencing, digitising, and attribute integration. The resulting maps illuminate the agricultural economy, land value distribution, and ownership structure of West Wittering in 1846 — providing a valuable historical baseline for understanding how the parish landscape has changed over the past 175 years." }
+        ]
+    },
+
+    // ──────────────────────────────────────────────────────────────
+    // PROJECT 3 — Iraqi Marshes Monitoring System
+    // ──────────────────────────────────────────────────────────────
+    project3: {
+        title: "Iraqi Marshes Monitoring System",
+        tags: ["Remote Sensing", "Cartography"],
+        tools: "Remote Sensing, Python, ArcGIS Pro",
+        duration: "4 months",
+
+        heroImage: "images/2200.jpg",
+        heroAlt:   "Iraqi Marshes satellite imagery",
+
+        content: [
+            { type: "section-heading", value: "Project Overview" },
+            { type: "text", value: "This project developed a multi-temporal monitoring system to track changes in the Iraqi Marshlands — a UNESCO World Heritage Site — using Landsat and Sentinel-2 satellite imagery over a 10-year period (2014–2024). The system quantified marsh extent, vegetation health, and seasonal flooding dynamics." },
+
+            // ↓ Replace with study area / satellite overview image
+            { type: "image-full", src: "images/jhree.jpg", alt: "Iraqi Marshes study area overview",
+              caption: "Fig 1. Iraqi Marshlands study area — Landsat true colour composite (2024)" },
+
+            { type: "section-heading", value: "Satellite Imagery Analysis" },
+            { type: "text", value: "Landsat 8 and Sentinel-2 scenes were pre-processed using DOS1 atmospheric correction and Sen2Cor pipelines. NDVI and NDWI indices were derived to classify marsh, open water, and dry land across 40 time steps spanning the full monitoring period." },
+
+            // ↓ Replace with NDVI/NDWI classification maps (3 time periods)
+            { type: "image-grid-3",
+              images: [
+                { src: "images/hjgf.jpg", alt: "NDVI classification 1994" },
+                { src: "images/gggf.jpg", alt: "NDVI classification 2004" },
+                { src: "images/rewt.jpg", alt: "NDVI classification 2024" }
+              ],
+              caption: "Fig 2. NDVI classification of Iraqi Marshes — 2014, 2019, 2024" },
+
+            { type: "section-heading", value: "Methodology" },
+            { type: "list", items: [
+                "Acquired and pre-processed Landsat 8 and Sentinel-2 imagery, applying DOS1 and Sen2Cor atmospheric corrections.",
+                "Developed NDVI and NDWI change detection algorithms in Python to classify marsh, open water, and dry land.",
+                "Performed time-series analysis to identify seasonal and inter-annual variability in marsh extent.",
+                "Validated results against field survey points and published hydrological records.",
+                "Designed an interactive change detection map series for reporting and dissemination."
+            ]},
+
+            // ↓ Replace with change detection output map
+            { type: "image-full", src: "images/ghf.jpg", alt: "Marsh extent change detection map 2014–2024",
+              caption: "Fig 3. Change detection map — marsh extent loss and recovery (2014–2024)" },
+
+            { type: "section-heading", value: "Key Outcomes" },
+            { type: "list", items: [
+                "Detected a 22% reduction in permanent marsh area between 2014 and 2018, with partial recovery by 2022.",
+                "Produced classified raster layers covering the full 10-year monitoring period.",
+                "Developed a reusable Python script for ongoing automated monitoring.",
+                "Generated annual NDVI trend charts highlighting vegetation stress periods."
+            ]},
+
+            // ↓ Replace with time-series chart / annual trend graph
+            { type: "image-placeholder", label: "NDVI time-series chart / annual trend graph" },
+
+            { type: "section-heading", value: "Conclusion" },
+            { type: "text", value: "The Iraqi Marshes monitoring system demonstrated scalable remote sensing workflows for environmental change detection. Results aligned closely with field-based studies and provided actionable insights for conservation and water resource management bodies." }
+        ]
+    },
+
+    // ──────────────────────────────────────────────────────────────
+    // PROJECT 4 — Ghana Lands Commission Digital Plan Proposal
+    // ──────────────────────────────────────────────────────────────
+    project4: {
+        title: "Ghana Lands Commission — Digital Plan Proposal",
+        tags: ["Web Mapping", "GIS Analysis"],
+        tools: "QGIS, WebMap, QR Code Technology, Google Maps API",
+        duration: "3 months",
+
+        heroImage: "images/image5.png",
+        heroAlt:   "Interactive WebMap of parcel boundaries on satellite imagery",
+
+        content: [
+            { type: "section-heading", value: "Project Overview" },
+            { type: "text", value: "A proposal submitted to the Ghana Lands Commission (Surveys and Mapping Division) to modernise their existing approved parcel plans through the integration of an interactive WebMap and Google Maps link, both embedded within a QR code printed on each approved plan. The innovation enables clients to visually explore their land parcel on satellite imagery or OpenStreetMap, access key property attributes, and navigate directly to their parcel via Google Maps — simply by scanning the QR code with a smartphone." },
+
+            { type: "section-heading", value: "Problem Statement" },
+            { type: "text", value: "Existing approved plans issued by the Lands Commission already include QR codes, but these codes only surface the GLPIN number and polygon coordinates — raw data that provides no meaningful context for the average client. Some plans show a lodgement or job number, which similarly offers little clarity. The proposal addresses this gap by replacing passive data display with an interactive, client-friendly digital experience." },
+
+            { type: "section-heading", value: "Existing Approved Plans" },
+            { type: "text", value: "The figures below show existing approved site plans with QR codes that link to coordinate data and GLPIN references only — offering no visual or navigational value to the client." },
+            { type: "image-grid-2",
+              images: [
+                { src: "images/image33.png", alt: "Existing approved site plan with QR code — Fig 1" },
+                { src: "images/image6.png", alt: "Existing approved site plan with QR code — Fig 2" }
+              ],
+              caption: "Fig 1 & 2. Current approved site plans with QR codes displaying GLPIN and coordinate data." },
+
+            { type: "section-heading", value: "Key Features" },
+            { type: "list", items: [
+                "QR Code Integration: The WebMap URL and Google Maps link are embedded in a QR code printed on the final approved plan. Clients scan the code to access their personalised map instantly.",
+                "Interactive WebMap: Displays the client's parcel boundary, beacon positions, and GLPIN overlaid on Google Satellite Imagery and OpenStreetMap, with interactive attribute pop-ups showing client name, landmark, and lodgement number.",
+                "Google Maps Link: Redirects clients to the centroid of their parcel, enabling turn-by-turn navigation. The GLPIN is programmatically converted to WGS84 coordinates for Google Maps compatibility.",
+                "Real-Time Updates: Any boundary changes or site updates can be reflected dynamically, ensuring clients always have current parcel information."
+            ]},
+
+            { type: "section-heading", value: "QR Code — Before & After" },
+            { type: "text", value: "The comparison below illustrates current approved plans with QR codes (left) against the proposed plans with the upgraded WebMap and Google Maps QR codes (right)." },
+            { type: "image-grid-2",
+              images: [
+                { src: "images/image33.png", alt: "Current plan QR code linking to coordinate data" },
+                { src: "images/image1.png", alt: "Proposed plan QR code linking to interactive WebMap" }
+              ],
+              caption: "Fig 3 & 4. Left: Current QR code output. Right: Proposed QR code linking to interactive WebMap." },
+
+            { type: "section-heading", value: "Proposed Approved Plans" },
+            { type: "text", value: "The redesigned approved plans incorporate the new QR codes in a position that preserves the existing plan aesthetics — placed at the back of the plan document, as agreed during internal discussions." },
+            { type: "image-grid-2",
+              images: [
+                { src: "images/image4.png", alt: "Proposed approved plan layout — version A" },
+                { src: "images/image7.png", alt: "Proposed approved plan layout — version B" }
+              ],
+              caption: "Fig 5 & 6. Proposed approved plan designs incorporating WebMap and Google Maps QR codes." },
+
+            { type: "section-heading", value: "Interactive WebMap" },
+            { type: "text", value: "The WebMap provides a dynamic, user-friendly interface where clients can navigate, zoom, and explore their parcel boundaries. Property attributes such as client name, landmark, and lodgement number appear as interactive pop-ups when layers are hovered over. Both Google Satellite and OpenStreetMap basemaps are available." },
+            { type: "image-full", src: "images/image5.png", alt: "Interactive WebMap displaying parcel boundary on satellite imagery",
+              caption: "Fig 7. Interactive WebMap — parcel boundary and beacon positions overlaid on satellite imagery with attribute pop-up." },
+
+            { type: "section-heading", value: "Google Maps Integration" },
+            { type: "text", value: "The Google Maps link is generated from the parcel's GLPIN, which is converted to WGS84 coordinates via a programmatic workflow. The link redirects clients directly to the centroid of their parcel, from which they can obtain turn-by-turn directions — particularly useful for clients unfamiliar with the physical location of their land." },
+            { type: "image-full", src: "images/image8.png", alt: "Google Maps view of parcel centroid location",
+              caption: "Fig 8. Google Maps link output — clients are directed to their parcel centroid for easy navigation." },
+
+            { type: "section-heading", value: "Benefits" },
+            { type: "list", items: [
+                "Enhanced Client Engagement: Clients can visually explore and verify their land parcel with confidence, reducing disputes and the need for physical site visits.",
+                "Professional Presentation: The modern, QR-enabled plan format reinforces the Commission's commitment to innovation and service quality.",
+                "Operational Efficiency: Reduces the need for repeated client enquiries and physical meetings, saving time for both surveyors and clients.",
+                "Reduced Land Guard Interference: Clients with direct parcel access via Google Maps are less dependent on physical escorts, reducing the risk of interference.",
+                "Data Accuracy: Digital mapping complements traditional plan documentation by providing a spatially accurate, interactive reference."
+            ]},
+
+            { type: "section-heading", value: "Discussion & Recommendations" },
+            { type: "text", value: "Key discussion points raised during the proposal review included: web hosting requirements (the Commission would need to establish a dedicated domain to host the WebMap); security considerations around embedding Google Maps links on official plans; the potential integration of the Ghana Postcode Address system (noted concerns over 5m accuracy generating multiple addresses per property); QR code positioning (recommended placement at the back of the plan to preserve existing aesthetics); and service delivery model (SMD Management suggested restricting the service to client request only, limiting the volume of parcel data exposed publicly)." },
+
+            { type: "section-heading", value: "Conclusion" },
+            { type: "text", value: "This proposal presents a practical, cost-effective pathway for the Ghana Lands Commission to modernise its parcel plan documentation. By integrating WebMap and Google Maps technology through QR codes, the Commission can significantly improve client communication, reduce operational overhead, and position itself at the forefront of digital land administration in Ghana." }
+        ]
+    },
+
+    // ──────────────────────────────────────────────────────────────
+    // PROJECT 5 — River Medway Nature-Based Solutions Suitability Analysis
+    // ──────────────────────────────────────────────────────────────
+    project5: {
+        title: "River Medway — Nature-Based Solutions Suitability Analysis",
+        tags: ["GIS Analysis", "Flood Risk Management"],
+        tools: "ArcGIS Pro, ModelBuilder, OS Terrain 50, BGS, Environment Agency",
+        duration: "7 months",
+
+        heroImage: "images/medway-estuary-aa06315b-me.jpg",
+        heroAlt:   "River Medway estuary",
+
+        content: [
+            { type: "section-heading", value: "Project Overview" },
+            { type: "text", value: "This project applied GIS-based multi-criteria analysis (MCA) to identify and map suitable locations for Nature-Based Solutions (NbS) across the Medway catchment, Kent. With climate change intensifying flood risk, the study evaluated four NbS types — Runoff Attenuation Features (RAFs), Floodplain Reconnection (FR), Large Woody Debris (LWD), and Wet Woodland (WW) — and produced a prioritised implementation strategy within a £1.5 million budget." },
+
+            // ↓ Replace with your location / catchment flood zone map (Fig 1)
+            { type: "image-full", src: "images/medway_locmap.jpg", alt: "Medway catchment location and flood zone map",
+              caption: "Fig 1. Location map showing the Medway catchment and Flood Zone 2 extent (Scale 1:300,000, BNG)" },
+
+            { type: "section-heading", value: "Methodology" },
+            { type: "text", value: "An ArcGIS Pro ModelBuilder workflow integrated five spatial datasets — a Digital Elevation Model (OS Terrain 50), habitat/land cover (Living England), flood zone extents (Environment Agency), soil infiltration (BGS), and upstream drainage area. The DEM was filled to remove sinks, then used to derive flow direction, flow accumulation, and slope rasters. All layers were reclassified onto a 0–5 suitability scale and combined using raster calculator expressions to generate weighted suitability outputs for each NbS type. Suitable raster cells were converted to polylines and buffered to produce realistic spatial footprints." },
+
+            // ↓ Replace with your ModelBuilder flow diagram (Fig 2)
+            { type: "image-full", src: "images/modelbuilder.jpg", alt: "ArcGIS ModelBuilder data processing flow diagram",
+              caption: "Fig 2. ArcGIS Pro ModelBuilder workflow — from DEM and thematic inputs to NbS suitability outputs" },
+
+            { type: "section-heading", value: "Suitability Criteria" },
+            { type: "text", value: "Suitability criteria were designed to reflect the physical, hydrological, and land-use requirements of each NbS type. Low slopes (0–3°) were prioritised for Floodplain Reconnection and Wet Woodland, which require flat, frequently inundated land. Gentle to moderate slopes (1–6°) favoured RAFs and LWD where flow interception is most effective. Upstream drainage area thresholds distinguished upper-catchment interventions (RAFs, LWD) from mid-to-lower catchment solutions (FR, WW). Flood Zone 2 was treated as essential for FR and WW, while woodland and grassland land cover were prioritised across all types." },
+
+            { type: "section-heading", value: "Results — NbS Suitability Map" },
+            { type: "text", value: "The MCA produced a clear spatial differentiation across the catchment. Large Woody Debris concentrated in the upper catchment where woodland and smaller drainage areas dominate. Runoff Attenuation Features distributed widely across mid-catchment. Floodplain Reconnection and Wet Woodland clustered in the low-gradient mid-to-lower floodplains where periodic inundation occurs." },
+
+            // ↓ Replace with your generic NbS suitability map (Fig 3)
+            { type: "image-full", src: "images/general_nbs_map.jpg", alt: "General NbS suitability map for Medway catchment",
+              caption: "Fig 3. GIS-based NbS suitability map for the Medway catchment — RAF, LWD, FR, and WW distribution (Scale 1:300,000, BNG)" },
+
+            { type: "section-heading", value: "Budget Optimisation" },
+            { type: "text", value: "Initial combined costs of £1.53 million marginally exceeded the £1.5 million budget. Overlapping suitability zones were resolved by removing the less suitable, higher-cost option at each site using ArcGIS Pro's Select tool, retaining one active NbS per location. The final portfolio covers 884.79 ha at a total cost of £1.32 million — comfortably within budget." },
+
+            // ↓ Replace with your proposed/optimised NbS suitability map (Fig 4)
+            { type: "image-full", src: "images/proposed_nbs-map.jpg", alt: "Proposed NbS suitability map within budget",
+              caption: "Fig 4. Proposed NbS suitability map for the Medway catchment — budget-optimised implementation portfolio (Scale 1:300,000, BNG)" },
+
+            { type: "section-heading", value: "Key Outcomes" },
+            { type: "list", items: [
+                "Identified 884.79 ha of suitable land across four NbS types within the Medway catchment.",
+                "Delivered a prioritised implementation portfolio within the £1.5 million client budget at a total cost of £1,321,124.",
+                "Floodplain Reconnection (288.32 ha / £761,165) identified as the largest single intervention by area and cost.",
+                "Wet Woodland (152.14 ha / £121,712) offered the best multifunctional value — flood attenuation, habitat creation, and sediment retention — at lowest cost.",
+                "ModelBuilder workflow is fully repeatable and scalable to other catchments and management scenarios."
+            ]},
+
+            { type: "section-heading", value: "Conclusion" },
+            { type: "text", value: "The study demonstrates the effectiveness of GIS-based multi-criteria analysis for evidence-led NbS planning at catchment scale. By integrating topography, hydrology, land cover, soil, and flood risk data into a structured spatial model, the project produced financially realistic and environmentally plausible recommendations — providing a transparent, decision-supportive framework for sustainable flood risk management in the Medway catchment." }
+        ]
+    },
+
+    // ──────────────────────────────────────────────────────────────
+    // PROJECT 6 — Broadway Pipeline: Terrain Evaluation Report
+    // ──────────────────────────────────────────────────────────────
+    project6: {
+        title: "Broadway Pipeline — Terrain Evaluation for Gas Pipeline Route",
+        tags: ["Remote Sensing", "Land Survey", "GIS Analysis"],
+        tools: "ArcGIS Pro, QGIS, LiDAR, Aerial Imagery, Digimap",
+        duration: "8 months",
+
+        heroImage: "images/abstract-background-with-landscape-topographic-map-design_1048-12830.jpg",
+        heroAlt:   "Broadway terrain topographic map",
+
+        content: [
+            { type: "section-heading", value: "Project Overview" },
+            { type: "text", value: "This project conducted a terrain evaluation for a proposed gas pipeline route through Broadway, Worcestershire — a historic village situated at the western base of the Cotswold Escarpment. The study integrated geological desk study, aerial photographic interpretation, LiDAR analysis, and a three-day field survey to identify geohazards, assess slope stability, and recommend the safest practicable pipeline alignment." },
+
+            // ↓ Replace with your location / study area map (Fig 1)
+            { type: "image-full", src: "images/broadway_study_area_location_map.jpg", alt: "Broadway study area location map",
+              caption: "Fig 1. Location map showing the Broadway study area and pipeline corridor, Worcestershire (BNG)" },
+
+            { type: "section-heading", value: "Geological Context" },
+            { type: "text", value: "Broadway sits on a sequence of Lower Jurassic formations — including the Charmouth Mudstone, Dyrham Formation, Marlstone Rock, and Inferior Oolite limestones — deposited roughly 140–210 million years ago. The site also shows evidence of periglacial modification during the Quaternary, with solifluction deposits mantling lower slopes. The alternation of competent limestone cap rocks over weaker clay-rich mudstones is the primary geological driver of slope instability and landslide activity across the escarpment." },
+
+            // ↓ Replace with your geological map (Fig 2)
+            { type: "image-full", src: "images/geological_map_of_broadway.jpg", alt: "Geological map of Broadway Worcestershire",
+              caption: "Fig 2. Geological map of Broadway — Jurassic strata including Aston Limestone, Charmouth Mudstone, Dyrham Formation, and Whitby Mudstone (Data: Digimap / BGS)" },
+
+            { type: "section-heading", value: "Historical Land Use" },
+            { type: "text", value: "Analysis of a 1900 OS historical map revealed an enclosed agricultural landscape, with field boundaries, woodland, orchards, streams, and small limestone quarries on higher ground. Broadway's land use shifted from mixed agriculture in the early 20th century toward heritage, tourism, and conservation by the 1990s — largely driven by the scenic limestone terrain and historic stone architecture." },
+
+            // ↓ Replace with your historical map (Fig 3)
+            { type: "image-full", src: "images/1900_historical_maps_of_broadway.jpg", alt: "1900 historical land use map of Broadway",
+              caption: "Fig 3. Historical map (c.1900) of Broadway showing land use, quarry sites, and study area boundary (Data: Edina Digimap / OS)" },
+
+            { type: "section-heading", value: "Landslide Mapping" },
+            { type: "text", value: "Geomorphological mapping was carried out through aerial photographic interpretation and LiDAR analysis, supported by field observation. The escarpment slopes show evidence of active and relict landsliding, with arcuate scarps, hummocky terrain, and irregular vegetation patterns confirming recurrent mass movement. Three principal landslide types were identified and mapped across the study area." },
+
+            // ↓ Replace with your aerial photo geomorphological map (Fig 4)
+            { type: "image-full", src: "images/aerial_photograph_feomorphological_map_of_broadway.jpg", alt: "Aerial photograph geomorphological map of Broadway",
+              caption: "Fig 4. Aerial imagery geomorphological map — active landslides, suspended landslides, springs, woodlands, and cambering features (Scale 1:10,000, Data: Edina Digimap)" },
+
+            // ↓ Replace with your LiDAR hillshade landslide map (Fig 5)
+            { type: "image-full", src: "images/Lidar_hillshade_landslide_map_of_broadway.jpg", alt: "LiDAR hillshade landslide map of Broadway",
+              caption: "Fig 5. LiDAR hillshade map showing rotational landslides, solifluction lobes, and translational landslides across the Broadway study area (Scale 1:10,000, Data: Edina Digimap)" },
+
+            { type: "section-heading", value: "Slope Analysis" },
+            { type: "text", value: "A slope map derived from a DEM (Earth Explorer) was used to correlate gradient with landslide type and activity. Rotational landslides cluster on moderate-to-steep slopes (8–24°), translational landslides dominate the steepest terrain (16–36°+), and solifluction lobes occupy gentler gradients (0–16°) where persistent saturation drives slow downslope creep. Increasing steepness corresponds directly with greater landslide velocity and hazard severity." },
+
+            // ↓ Replace with your slope gradient / landslide map (Fig 6)
+            { type: "image-full", src: "images/slope gradient_map_with_landslide.jpg", alt: "Slope gradient map with landslide overlay",
+              caption: "Fig 6. Slope map of Broadway showing gradient classification and landslide distribution — darker shades indicate steeper, higher-risk terrain (Data: DEM / Earth Explorer, BNG)" },
+
+            { type: "section-heading", value: "Geohazard Risk Assessment" },
+            { type: "text", value: "A structured geohazard risk assessment evaluated each mapped landslide feature against its potential impact on buried pipeline infrastructure. Rotational and overlapping multi-phase landslides were rated Very High risk, translational landslides and gullies High risk, and solifluction lobes Moderate risk. Deep-seated ground displacement can induce bending stresses beyond pipeline design tolerances, while surface erosion and gully formation threaten pipe cover and bedding integrity." },
+
+            { type: "section-heading", value: "Recommended Pipeline Alignment" },
+            { type: "text", value: "The recommended route was selected to follow relatively competent bedrock and stable superficial deposits, avoiding weak colluvium, head deposits, and former quarry workings. The alignment traces gentler valley floor gradients, crosses permeable horizons and spring zones at right angles, and routes through existing transport corridors and agricultural boundaries to minimise both geohazard exposure and environmental impact." },
+
+            // ↓ Replace with your proposed pipeline route map (Fig 7)
+            { type: "image-full", src: "images/proposed_gas_pipeline.jpg", alt: "Proposed gas pipeline route map Broadway",
+              caption: "Fig 7. Recommended gas pipeline alignment for Broadway, Worcestershire — routed to avoid high-risk landslide zones and steep escarpment terrain (Scale 1:17,000, BNG)" },
+
+            { type: "section-heading", value: "Key Outcomes" },
+            { type: "list", items: [
+                "Mapped and classified all active, suspended, and relict landslide features across the Broadway escarpment using LiDAR, aerial imagery, and field survey.",
+                "Produced a structured geohazard risk table rating five landslide feature types against pipeline integrity risks.",
+                "Identified the Charmouth Mudstone / limestone contact as the primary geological driver of slope instability.",
+                "Recommended a pipeline alignment avoiding Very High and High risk terrain while maintaining constructability.",
+                "Integrated geological mapping, historical land use analysis, LiDAR, and slope modelling into a unified terrain evaluation report."
+            ]},
+
+            { type: "section-heading", value: "Conclusion" },
+            { type: "text", value: "The Broadway terrain evaluation demonstrated how multi-source geospatial analysis — combining geological desk study, remote sensing, and field geomorphological mapping — can effectively characterise complex slope hazards and inform safe infrastructure routing. The recommended pipeline alignment balances geohazard avoidance with practical engineering constraints, providing a sound basis for detailed design and ground investigation." }
+        ]
+    },
+
+    // ──────────────────────────────────────────────────────────────
+    // PROJECT 7 — Newmont Mining Cadastral Survey, Ghana
+    // ──────────────────────────────────────────────────────────────
+    project7: {
+        title: "Newmont Mining — Cadastral Survey of 40 Concessions, Ghana",
+        tags: ["Land Survey", "GIS Analysis", "Cartography"],
+        tools: "GNSS Total Station, ArcGIS Pro, QGIS, AutoCAD",
+        duration: "18 months",
+
+        heroImage: "images/abstract-background-with-landscape-topographic-map-design_1048-12830.jpg",
+        heroAlt:   "Cadastral survey and boundary mapping",
+
+        content: [
+            { type: "section-heading", value: "Project Overview" },
+            { type: "text", value: "This project involved the full cadastral survey and boundary demarcation of 40 mining concessions acquired by Newmont Mining Corporation across the Ahafo and Akyem regions of Ghana. Working as GIS Specialist within the Ghana Lands Commission, I led the field survey operations and GIS data management — from initial control network establishment through to the production of certified cadastral plans and georeferenced GIS datasets for each concession. The work formed part of Newmont's statutory obligations under Ghanaian mining law and provided legally binding spatial records for land administration and community resettlement planning." },
+
+            { type: "section-heading", value: "Project Scope & Context" },
+            { type: "text", value: "Newmont's mining operations in Ghana require secure legal title over surface land before extraction activities can commence. The 40 concessions ranged from 2 to 85 hectares in size, encompassing agricultural land, community settlements, and forest reserve boundaries. Accurate cadastral records were essential for compensation assessments, community land rights documentation, and environmental impact assessment submissions. All surveys were conducted in accordance with Ghana Lands Commission standards and the Survey Act (Act 127) of Ghana." },
+
+            { type: "image-placeholder", label: "Insert study area overview map — concession locations across Ahafo/Akyem regions" },
+
+            { type: "section-heading", value: "Survey Methodology" },
+            { type: "text", value: "The survey workflow was structured into four phases. Phase 1 established a network of primary and secondary control points across each concession area using Differential GPS (DGPS), with observations processed against the Ghana National Geodetic Reference Frame (GNRF). Phase 2 involved detailed boundary traverses using GNSS and Total Station equipment, with all boundary beacons physically placed and referenced by iron pegs with concrete surrounds. Phase 3 comprised field data processing — importing raw traverse data into ArcGIS Pro, applying coordinate transformations to Ghana National Grid (Accra Datum), and performing closure checks to ensure positional accuracy within 1:5,000. Phase 4 produced final certified cadastral plans and GIS datasets submitted to the Lands Commission for registration." },
+
+            { type: "section-heading", value: "Control Network & Equipment" },
+            { type: "list", items: [
+                "GNSS Equipment: Trimble R10 GNSS receivers used for primary control observations, with baselines processed using Trimble Business Centre to achieve sub-centimetre accuracy.",
+                "Total Station: Leica TS16 reflectorless total station used for boundary traverses and detail surveys in areas with limited GNSS signal (dense forest and built-up zones).",
+                "Coordinate System: All survey data transformed to Ghana National Grid (Transverse Mercator, Accra Datum) for consistency with Lands Commission cadastral records.",
+                "Beacon Placement: Iron boundary pegs set in concrete (300mm × 300mm) at all concession corners and intermediate boundary points, with unique beacon references recorded in field books and GIS attribute tables.",
+                "QA/QC: Independent check observations carried out for 10% of all boundary points; misclosure ratios computed for every traverse and re-surveyed where outside 1:3,000 tolerance."
+            ]},
+
+            { type: "image-placeholder", label: "Insert cadastral plan sample — boundary traverse with beacon references" },
+
+            { type: "section-heading", value: "GIS Data Management" },
+            { type: "text", value: "All field-collected data was processed and integrated into a centralised ArcGIS Pro geodatabase maintained at the Ghana Lands Commission GIS Unit. Feature classes were created for concession boundaries, beacon positions, control points, and adjoining parcel boundaries. Topology rules were applied across all polygon and polyline layers to ensure no gaps, overlaps, or duplicate boundaries between adjacent concessions. Attribute tables were populated with concession reference numbers, GLPIN identifiers, area calculations, perimeter lengths, and ownership details. Final datasets were exported in Shapefile and Geodatabase format for submission to Newmont and Lands Commission records." },
+
+            { type: "section-heading", value: "Cadastral Plan Production" },
+            { type: "text", value: "Certified cadastral plans were produced for each of the 40 concessions using ArcGIS Pro layout templates compliant with Ghana Lands Commission cartographic standards. Each plan included: a scale bar and north arrow, coordinate grid referenced to Ghana National Grid, beacon reference table with GNSS coordinates and ground distances, adjoining parcel references and ownership details, land use annotation, and the official Lands Commission stamp and surveyor certification block. Plans were plotted at scales between 1:1,000 and 1:5,000 depending on concession size, and submitted as both hard-copy A0 prints and georeferenced PDF files." },
+
+            { type: "image-placeholder", label: "Insert certified cadastral plan example — title block, grid, beacon table" },
+
+            { type: "section-heading", value: "Field Challenges & Solutions" },
+            { type: "list", items: [
+                "Dense Forest Cover: GNSS signal obstruction in heavily forested concession areas required extended Total Station traverses from established control points, increasing field time by an average of 40% for forested sites.",
+                "Community Access Disputes: Three concessions encountered community resistance to boundary placement. These were resolved through facilitated community consultation sessions coordinated with Newmont's Community Relations team and Lands Commission district officers.",
+                "Datum Inconsistencies: Legacy boundary markers from pre-2000 surveys were found to be referenced to the outdated War Office 1926 datum. All historical coordinates were transformed to Ghana National Grid using published datum shift parameters and verified against re-observed control points.",
+                "Monsoon Season Disruption: Significant rainfall during the second quarter delayed fieldwork at 8 concession sites. Survey schedules were restructured to prioritise accessible sites and complete office processing work during extended rain periods.",
+                "Cross-boundary Overlaps: Four concession pairs revealed overlapping boundary claims with adjacent traditional landowners. These were escalated to the Lands Commission Adjudication Division and resolved through joint boundary inspection and written consent agreements."
+            ]},
+
+            { type: "section-heading", value: "Key Outputs & Results" },
+            { type: "list", items: [
+                "40 fully surveyed and demarcated mining concessions totalling approximately 1,240 hectares.",
+                "Primary control network of 112 GNSS control points established across the survey area.",
+                "2,800+ boundary beacons physically placed, referenced, and recorded in GIS.",
+                "40 certified cadastral plans produced to Ghana Lands Commission standards and submitted for official registration.",
+                "Centralised ArcGIS Pro geodatabase containing all concession boundaries, beacon positions, and attribute data, delivered to both Newmont and the Lands Commission.",
+                "All traverse misclosures within 1:5,000 tolerance; independent check observations confirming sub-0.05m positional accuracy at 94% of beacon positions checked.",
+                "Survey data formed the spatial basis for Newmont's Environmental Impact Assessment (EIA) and Community Resettlement Action Plan (RAP) submissions."
+            ]},
+
+            { type: "section-heading", value: "Conclusion" },
+            { type: "text", value: "The Newmont Mining cadastral survey project was one of the most operationally complex land survey commissions undertaken by the Ghana Lands Commission GIS/Special Projects Unit. It demonstrated the importance of integrating precise field survey techniques with robust GIS data management to produce legally defensible cadastral records at scale. The resulting plans and datasets provided Newmont with the secure land title documentation required for responsible mining operations, while ensuring community land rights and boundaries were formally recorded and protected within the national land administration system." }
+        ]
+    }
+
+
+}; // end PROJECT_ARTICLES
+</script>
+
+    <!-- =============================================
+         MODAL POPUP
+         ============================================= -->
+    <div class="modal-overlay" id="projectModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-box">
+            <div id="modalHero"></div>
+            <div class="modal-header">
+                <div class="modal-header-text">
+                    <div class="modal-tags" id="modalTags"></div>
+                    <h2 class="modal-title" id="modalTitle"></h2>
+                </div>
+                <button class="modal-close" id="modalClose" aria-label="Close">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Header/Navigation -->
+    <header class="header">
+        <div class="container">
+            <div class="logo-section">
+                <img src="images/IMG_0308.JPG" alt="Emmanuel Logo" class="logo-img">
+                <div class="logo-text">
+                    <h1><a href="index.html">Emmanuel Abebresse</a></h1>
+                    <p class="subtitle">Geomatic Engineer / GIS Analyst</p>
+                </div>
+            </div>
+            <nav class="nav">
+                <button class="mobile-menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <ul class="nav-list">
+                    <li><a href="index.html">ABOUT ME</a></li>
+                    <li><a href="resume.html">RESUME</a></li>
+                    <li><a href="projects.html" class="active">PROJECTS</a></li>
+                    <li><a href="contact.html">CONTACT</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Projects Hero -->
+    <section class="projects-hero">
+        <div class="hero-background">
+            <div class="grid-overlay"></div>
+            <div class="gradient-orb orb-1"></div>
+            <div class="gradient-orb orb-2"></div>
+            <div class="gradient-orb orb-3"></div>
+        </div>
+        <div class="container">
+            <div class="hero-content-wrapper">
+                <span class="hero-label">Portfolio</span>
+                <h1 class="hero-title">
+                    Mapping the World,
+                    <span class="highlight">One Project at a Time</span>
+                </h1>
+                <p class="hero-description">
+                    Explore a collection of geospatial analysis, cartographic design, and 
+                    surveying projects that showcase innovative solutions to complex spatial challenges.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">20</span>
+                        <span class="stat-label">Projects Completed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">12+</span>
+                        <span class="stat-label">Cities Mapped</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100K+</span>
+                        <span class="stat-label">Data Points Analyzed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Section -->
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-controls">
+                <button class="filter-btn active" data-filter="all">All Projects</button>
+                <button class="filter-btn" data-filter="gis">GIS Analysis</button>
+                <button class="filter-btn" data-filter="cartography">Cartography</button>
+                <button class="filter-btn" data-filter="survey">Land Survey</button>
+                <button class="filter-btn" data-filter="remote-sensing">Remote Sensing</button>
+                <button class="filter-btn" data-filter="web-mapping">Web Mapping</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Grid -->
+    <section class="projects-section">
+        <div class="container">
+            <div class="projects-grid" id="projectsGrid">
+                
+                <!-- Project Card 1 -->
+                <article class="project-card" data-category="gis remote-sensing">
+                    <div class="project-image-wrapper">
+                        <div class="project-image">
+                            <img src="images/fire-fighters-at-forest-fire-c-quarrie-photography.jpg" 
+                                 alt="Urban Heat Island Analysis" loading="lazy">
+                            <div class="image-overlay"></div>
+                        </div>
+                        <div class="project-number">01</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag tag-gis">GIS Analysis</span>
+                            <span class="tag tag-cartography">Remote Sensing</span>
+                        </div>
+                        <h3 class="project-title">Shasta County(CA) Wildfire Analysis </h3>
+                        <p class="project-description">
+                            The Shasta County wildfire project, analysed the spatial distribution and impacts of major fires across Shasta County
+                            using GIS-based risk modelling and impact assessment. Wildfire perimeters, incident points, data were overlaid with 
+                            population density, infrastructure, land cover, and critical facilities to evaluate
+                            exposure and vulnerability.
+                        </p>
+                        <div class="project-meta">
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                                </svg>
+                                <span>ArcGIS Pro</span>
+                            </div>
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span> 3 weeks</span>
+                            </div>
+                        </div>
+                        <a href="#" class="project-link" onclick="openModal('project1'); return false;">
+                            <span>Explore Project</span>
+                            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M5 12h14M12 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Project Card 2 -->
+                <article class="project-card" data-category="cartography gis">
+                    <div class="project-image-wrapper">
+                        <div class="project-image">
+                            <img src="images/land-use-biodiversity_1600.jpg" 
+                                 alt="Infrastructure Survey Project" loading="lazy">
+                            <div class="image-overlay"></div>
+                        </div>
+                        <div class="project-number">02</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag tag-survey">Cartography</span>
+                            <span class="tag tag-gis">GIS Analysis</span>
+                        </div>
+                        <h3 class="project-title">West Wittering (UK) Historical LandUse</h3>
+                        <p class="project-description">
+                            The West Wittering Historical Land Use GIS Project involved digitising and reconstructing a 1846 land use tithe map of West Wittering to create an 
+                            accurate geospatial dataset for analysis and comparison.
+                        </p>
+                        <div class="project-meta">
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                                </svg>
+                                <span>ArcGIS pro · ArcGIS Online, SQL</span>
+                            </div>
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span>2 weeks</span>
+                            </div>
+                        </div>
+                        <a href="#" class="project-link" onclick="openModal('project2'); return false;">
+                            <span>Explore Project</span>
+                            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M5 12h14M12 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Project Card 3 -->
+                <article class="project-card" data-category="remote-sensing cartography">
+                    <div class="project-image-wrapper">
+                        <div class="project-image">
+                            <img src="images/2200.jpg" 
+                                 alt="Forest Change Detection" loading="lazy">
+                            <div class="image-overlay"></div>
+                        </div>
+                        <div class="project-number">03</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag tag-remote">Remote Sensing</span>
+                            <span class="tag tag-cartography">Cartography</span>
+                        </div>
+                        <h3 class="project-title">Iraqi Marshes Monitoring System</h3>
+                        <p class="project-description">
+                            Multi-temporal analysis of Iraqi Marshes cover changes using Landsat and Sentinel-2 
+                            imagery. Developed automated NDVI change detection algorithms to track
+                            patterns over a 10-year period.
+                        </p>
+                        <div class="project-meta">
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                                </svg>
+                                <span>Remote Sensing, NDVI, ArcGIS pro</span>
+                            </div>
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span>1 month</span>
+                            </div>
+                        </div>
+                        <a href="#" class="project-link" onclick="openModal('project3'); return false;">
+                            <span>Explore Project</span>
+                            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M5 12h14M12 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Project Card 4 -->
+                <article class="project-card" data-category="web-mapping gis">
+                    <div class="project-image-wrapper">
+                        <div class="project-image">
+                            <img src="images/image5.png" 
+                                 alt="Interactive WebMap — Ghana Lands Commission Parcel Plans" loading="lazy">
+                            <div class="image-overlay"></div>
+                        </div>
+                        <div class="project-number">04</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag tag-web">Web Mapping</span>
+                            <span class="tag tag-gis">GIS Analysis</span>
+                        </div>
+                        <h3 class="project-title">Ghana Lands Commission — Digital Plan Proposal</h3>
+                        <p class="project-description">
+                            A proposal to modernise Ghana Lands Commission approved parcel plans by 
+                            integrating an interactive WebMap and Google Maps link embedded in a QR code, 
+                            enabling clients to visually explore their land parcel via satellite imagery.
+                        </p>
+                        <div class="project-meta">
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                                </svg>
+                                <span>QGIS, WebMap, QR Code, Google Maps API</span>
+                            </div>
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span>2 months</span>
+                            </div>
+                        </div>
+                        <a href="#" class="project-link" onclick="openModal('project4'); return false;">
+                            <span>Explore Project</span>
+                            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M5 12h14M12 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Project Card 5 -->
+                <article class="project-card" data-category="gis">
+                    <div class="project-image-wrapper">
+                        <div class="project-image">
+                            <img src="images/medway-estuary-aa06315b-me.jpg" 
+                                 alt="Flood Risk Assessment" loading="lazy">
+                            <div class="image-overlay"></div>
+                        </div>
+                        <div class="project-number">05</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag tag-gis">GIS Analysis</span>
+                            <span class="tag tag-cartography">Cartography</span>
+                        </div>
+                        <h3 class="project-title">River Medway Flood Risk Analysis</h3>
+                        <p class="project-description">
+                            This project applied GIS-based multi-criteria analysis (MCA) to identify and map suitable locations for Nature-Based Solutions (NbS), such as; Flood Reconnection, 
+                            Run-off Attenuation Features, Large Wood Debris, Wet Woodland, across the Medway catchment, Kent to mitigate flood risk witihn a government budget of 1.5million pounds.
+                        </p>
+                        <div class="project-meta">
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                                </svg>
+                                <span>ArcGIS, Remote Sensing, Hydrography</span>
+                            </div>
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span>8 weeks</span>
+                            </div>
+                        </div>
+                        <a href="#" class="project-link" onclick="openModal('project5'); return false;">
+                            <span>Explore Project</span>
+                            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M5 12h14M12 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </article>
+
+                <!-- Project Card 6 -->
+                <article class="project-card" data-category="remote-sensing survey gis">
+                    <div class="project-image-wrapper">
+                        <div class="project-image">
+                            <img src="images/abstract-background-with-landscape-topographic-map-design_1048-12830.jpg" 
+                                 alt="Historical Map Recreation" loading="lazy">
+                            <div class="image-overlay"></div>
+                        </div>
+                        <div class="project-number">06</div>
+                    </div>
+                    <div class="project-content">
+                        <div class="project-tags">
+                            <span class="tag tag-remote">Remote Sensing</span>
+                            <span class="tag tag-survey">Land Survey</span>
+                        </div>
+                        <h3 class="project-title">Broadway Terrain Analysis</h3>
+                        <p class="project-description">
+                            Detailed Terrain Evaluation project documenting geomorphological heritage and urban 
+                            evolution. To assess the possibility of a Gas Pipeline route within the broadway study location.
+                            
+                        </p>
+                        <div class="project-meta">
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                                    <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                                </svg>
+                                <span>QGIS, Field Survey ArcGIS pro, Land Survey</span>
+                            </div>
+                            <div class="meta-item">
+                                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span>6 weeks</span>
+                            </div>
+                        </div>
+                        <a href="#" class="project-link" onclick="openModal('project6'); return false;">
+                            <span>Explore Project</span>
+                            <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M5 12h14M12 5l7 7-7 7"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Have a Geospatial Project in Mind?</h2>
+                <p>Let's collaborate to turn spatial data into actionable insights</p>
+                <a href="contact.html" class="btn btn-cta">
+                    <span>Get in Touch</span>
+                    <svg class="btn-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M5 12h14M12 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Call</h3>
+                    <p>+447769026796</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Email</h3>
+                    <p><a href="/cdn-cgi/l/email-protection#563433342c2f676616313b373f3a7835393b"><span class="__cf_email__" data-cfemail="89ebecebf3f0b8b9c9eee4e8e0e5a7eae6e4"><span class="__cf_email__" data-cfemail="b2d0d7d0c8cb8382f2d5dfd3db9cd1dddf"><span class="__cf_email__" data-cfemail="197b7c7b63602829597e74787075377a7674"><span class="__cf_email__" data-cfemail="aecccbccd4d79f9eeec9c3cfc7c280cdc1c3">bebzy10@gmail.com</span></span></a></p>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow</h3>
+                    <div class="footer-social" style="display:flex;gap:14px;align-items:center;margin-top:8px;">
+                        <!-- GitHub -->
+                        <a href="https://github.com/xyclops92" target="_blank" aria-label="GitHub"
+                           style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);transition:background 0.25s,transform 0.25s,border-color 0.25s;"
+                           onmouseover="this.style.background='rgba(255,255,255,0.18)';this.style.transform='translateY(-3px)';this.style.borderColor='rgba(255,255,255,0.35)'"
+                           onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.transform='translateY(0)';this.style.borderColor='rgba(255,255,255,0.12)'">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/>
+                            </svg>
+                        </a>
+                        <!-- X / Twitter -->
+                        <a href="https://www.twitter.com/MapsbyBebzy" target="_blank" aria-label="Twitter/X"
+                           style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);transition:background 0.25s,transform 0.25s,border-color 0.25s;"
+                           onmouseover="this.style.background='rgba(255,255,255,0.18)';this.style.transform='translateY(-3px)';this.style.borderColor='rgba(255,255,255,0.35)'"
+                           onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.transform='translateY(0)';this.style.borderColor='rgba(255,255,255,0.12)'">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,0.8)">
+                                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.91-5.622Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                            </svg>
+                        </a>
+                        <!-- LinkedIn -->
+                        <a href="https://www.linkedin.com" target="_blank" aria-label="LinkedIn"
+                           style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);transition:background 0.25s,transform 0.25s,border-color 0.25s;"
+                           onmouseover="this.style.background='rgba(10,102,194,0.7)';this.style.transform='translateY(-3px)';this.style.borderColor='rgba(10,102,194,0.9)'"
+                           onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.transform='translateY(0)';this.style.borderColor='rgba(255,255,255,0.12)'">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="rgba(255,255,255,0.8)">
+                                <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/>
+                            </svg>
+                        </a>
+                        <!-- Instagram -->
+                        <a href="https://www.instagram.com/mapsbybebzy" target="_blank" aria-label="Instagram"
+                           style="display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);transition:background 0.25s,transform 0.25s,border-color 0.25s;"
+                           onmouseover="this.style.background='rgba(193,53,132,0.7)';this.style.transform='translateY(-3px)';this.style.borderColor='rgba(193,53,132,0.9)'"
+                           onmouseout="this.style.background='rgba(255,255,255,0.08)';this.style.transform='translateY(0)';this.style.borderColor='rgba(255,255,255,0.12)'">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.8)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 by Emmanuel Abebresse.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- =============================================
+         MODAL RENDERING ENGINE — no edits needed here
+         ============================================= -->
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        const modal      = document.getElementById('projectModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalTags  = document.getElementById('modalTags');
+        const modalHero  = document.getElementById('modalHero');
+        const modalBody  = document.getElementById('modalBody');
+        const modalClose = document.getElementById('modalClose');
+
+        /* Dashed placeholder box */
+        function placeholder(label, compact) {
+            return `<div class="img-placeholder${compact ? ' compact' : ''}">
+                        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.4">
+                            <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                            <polyline points="21 15 16 10 5 21"></polyline>
+                        </svg>
+                        <span>${label}</span>
+                    </div>`;
+        }
+
+        /* Render one content block */
+        function renderBlock(b) {
+            switch (b.type) {
+
+                case 'section-heading':
+                    return `<h4 class="modal-section-heading">${b.value}</h4>`;
+
+                case 'text':
+                    return `<p style="font-size:15px;margin:0 0 14px;color:rgba(255,255,255,0.75);line-height:1.8;">${b.value}</p>`;
+
+                case 'list':
+                    return `<ul style="margin:0 0 16px;padding-left:22px;">
+                        ${b.items.map(i => `<li style="font-size:15px;margin-bottom:8px;color:rgba(255,255,255,0.75);">${i}</li>`).join('')}
+                    </ul>`;
+
+                case 'image-full': {
+                    const cap = b.caption ? `<p class="img-caption">${b.caption}</p>` : '';
+                    if (!b.src || b.src === 'PLACEHOLDER') return placeholder(b.alt || 'Image') + cap;
+                    return `<img src="${b.src}" alt="${b.alt||''}" class="img-full"
+                                 onerror="this.outerHTML='${placeholder(b.alt||'Image could not load').replace(/'/g, "\\'")}'">` + cap;
+                }
+
+                case 'image-portrait': {
+                    const cap = b.caption ? `<p class="img-caption">${b.caption}</p>` : '';
+                    if (!b.src || b.src === 'PLACEHOLDER') return placeholder(b.alt || 'Image') + cap;
+                    return `<img src="${b.src}" alt="${b.alt||''}" class="img-portrait"
+                                 onerror="this.outerHTML='${placeholder(b.alt||'Image could not load').replace(/'/g, "\\'")}'">` + cap;
+                }
+
+                case 'image-inline-right': {
+                    if (!b.src || b.src === 'PLACEHOLDER')
+                        return `<div style="float:right;width:44%;margin:4px 0 14px 20px;">${placeholder(b.alt||'Image', true)}</div>`;
+                    return `<img src="${b.src}" alt="${b.alt||''}" class="img-inline-right"
+                                 onerror="this.style.display='none'">`;
+                }
+
+                case 'image-inline-left': {
+                    if (!b.src || b.src === 'PLACEHOLDER')
+                        return `<div style="float:left;width:44%;margin:4px 20px 14px 0;">${placeholder(b.alt||'Image', true)}</div>`;
+                    return `<img src="${b.src}" alt="${b.alt||''}" class="img-inline-left"
+                                 onerror="this.style.display='none'">`;
+                }
+
+                case 'image-grid-2': {
+                    const cap = b.caption ? `<p class="img-caption">${b.caption}</p>` : '';
+                    const imgs = b.images.map(img =>
+                        (!img.src || img.src === 'PLACEHOLDER')
+                            ? `<div style="aspect-ratio:4/3;">${placeholder(img.alt||'Image', true)}</div>`
+                            : `<img src="${img.src}" alt="${img.alt||''}" onerror="this.style.display='none'">`
+                    ).join('');
+                    return `<div class="img-grid-2">${imgs}</div>${cap}`;
+                }
+
+                case 'image-grid-3': {
+                    const cap = b.caption ? `<p class="img-caption">${b.caption}</p>` : '';
+                    const imgs = b.images.map(img =>
+                        (!img.src || img.src === 'PLACEHOLDER')
+                            ? `<div style="aspect-ratio:4/3;">${placeholder(img.alt||'Image', true)}</div>`
+                            : `<img src="${img.src}" alt="${img.alt||''}" onerror="this.style.display='none'">`
+                    ).join('');
+                    return `<div class="img-grid-3">${imgs}</div>${cap}`;
+                }
+
+                case 'image-placeholder':
+                    return placeholder(b.label || 'Image placeholder');
+
+                default:
+                    return '';
+            }
+        }
+
+        /* Open modal */
+        function openModal(projectId) {
+            const data = PROJECT_ARTICLES[projectId];
+            if (!data) return;
+
+            // Hero
+            if (data.heroImage) {
+                modalHero.innerHTML = `<img src="${data.heroImage}" alt="${data.heroAlt||''}" class="modal-hero-img"
+                    onerror="this.parentElement.innerHTML='<div class=\\'modal-hero-placeholder\\'><span>Hero image</span></div>'">`;
+            } else {
+                modalHero.innerHTML = `<div class="modal-hero-placeholder"><span>Hero image</span></div>`;
+            }
+
+            // Tags + title
+            modalTags.innerHTML = data.tags.map(t => `<span class="modal-tag">${t}</span>`).join('');
+            modalTitle.textContent = data.title;
+
+            // Meta row
+            let html = `<div class="modal-meta-row">
+                <div class="modal-meta-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+                        <path d="M2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                    </svg>
+                    <span><strong>Tools:</strong> ${data.tools}</span>
+                </div>
+                <div class="modal-meta-item">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span><strong>Duration:</strong> ${data.duration}</span>
+                </div>
+            </div>`;
+
+            // Content blocks
+            data.content.forEach(block => { html += renderBlock(block); });
+            // Clear any floats at the end
+            html += `<div style="clear:both;"></div>`;
+
+            modalBody.innerHTML = html;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            modal.querySelector('.modal-box').scrollTop = 0;
+        }
+
+        /* Close modal */
+        function closeModal() {
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        modalClose.addEventListener('click', closeModal);
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) closeModal();
+        });
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+    
+        /* ── Filter buttons ── */
+        document.querySelectorAll('.filter-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
+                this.classList.add('active');
+                var filter = this.getAttribute('data-filter');
+                document.querySelectorAll('.project-card').forEach(function(card) {
+                    if (filter === 'all') {
+                        card.style.display = '';
+                    } else {
+                        var cats = (card.getAttribute('data-category') || '').split(' ');
+                        card.style.display = cats.indexOf(filter) !== -1 ? '' : 'none';
+                    }
+                });
+            });
+        });
+
+        /* ── Clicking card image or title also opens modal ── */
+        document.querySelectorAll('.project-card').forEach(function(card) {
+            var link = card.querySelector('.project-link');
+            if (!link) return;
+            var onclickAttr = link.getAttribute('onclick') || '';
+            var match = onclickAttr.match(/openModal\('([^']+)'\)/);
+            if (!match) return;
+            var projectId = match[1];
+            card.querySelector('.project-image-wrapper').addEventListener('click', function() {
+                openModal(projectId);
+            });
+            card.querySelector('.project-image-wrapper').style.cursor = 'pointer';
+        });
+
+        /* ── Tag pills on cards open filter ── */
+        document.querySelectorAll('.project-card .project-tags .tag').forEach(function(tag) {
+            tag.style.cursor = 'pointer';
+            tag.addEventListener('click', function(e) {
+                e.stopPropagation();
+                /* Map tag text to filter value */
+                var text = this.textContent.trim().toLowerCase();
+                var map = {
+                    'gis analysis': 'gis',
+                    'cartography': 'cartography',
+                    'land survey': 'survey',
+                    'remote sensing': 'remote-sensing',
+                    'web mapping': 'web-mapping',
+                    'flood risk management': 'gis'
+                };
+                var filter = map[text] || 'all';
+                var targetBtn = document.querySelector('.filter-btn[data-filter="' + filter + '"]');
+                if (targetBtn) targetBtn.click();
+                /* Scroll to filter section */
+                var filterSection = document.querySelector('.filter-section');
+                if (filterSection) filterSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+    </script>
+
+</body>
+</html>
