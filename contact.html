@@ -20,25 +20,10 @@
             margin: 0 auto;
         }
 
-        /* ── FAQ accordion — max-height approach overrides any external CSS clipping ── */
-        .faq-answer {
-            max-height: 0 !important;
-            overflow: hidden !important;
-            display: block !important;
-            transition: max-height 0.38s ease, padding 0.38s ease;
-            padding: 0 2px !important;
-        }
-        .faq-answer p {
-            margin: 0;
-            padding-bottom: 22px;
-            font-size: 15px;
-            line-height: 1.78;
-        }
-        .faq-item.open .faq-answer {
-            max-height: 600px !important;
-            padding-top: 10px !important;
-        }
-        .faq-icon { transition: transform 0.3s ease; flex-shrink: 0; }
+        /* ── FAQ accordion ── */
+        .faq-answer { display: none; padding: 0 0 16px; }
+        .faq-item.open .faq-answer { display: block; }
+        .faq-icon { transition: transform 0.25s ease; flex-shrink: 0; }
         .faq-item.open .faq-icon { transform: rotate(180deg); }
         .faq-question {
             display: flex;
@@ -46,8 +31,7 @@
             justify-content: space-between;
             cursor: pointer;
             gap: 12px;
-            padding: 6px 0;
-            user-select: none;
+            padding: 4px 0;
         }
 
         /* ── Form feedback ── */
@@ -164,14 +148,14 @@
                         </div>
                     </a>
 
-                    <a href="/cdn-cgi/l/email-protection#3e7c5b5c44470f0e7e59535f5752105d5153" class="quick-contact-item">
+                    <a href="/cdn-cgi/l/email-protection#682a0d0a12115958280f05090104460b0705" class="quick-contact-item">
                         <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                             <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                             <polyline points="22,6 12,13 2,6"></polyline>
                         </svg>
                         <div class="contact-info">
                             <span class="label">Email</span>
-                            <span class="value"><span class="__cf_email__" data-cfemail="febc9b9c8487cfcebe99939f9792d09d9193">[email&#160;protected]</span></span>
+                            <span class="value"><span class="__cf_email__" data-cfemail="2f6d4a4d55561e1f6f48424e4643014c4042">bebzy10@gmail.com</span></span>
                         </div>
                     </a>
                 </div>
@@ -352,7 +336,7 @@
 
                 <div class="footer-section">
                     <h3>Email</h3>
-                    <p><a href="/cdn-cgi/l/email-protection#1b597e7961622a2b5b7c767a727735787476"><span class="__cf_email__" data-cfemail="460423243c3f777606212b272f2a6825292b">[email&#160;protected]</span></a></p>
+                    <p><a href="/cdn-cgi/l/email-protection#aceec9ced6d59d9ceccbc1cdc5c082cfc3c1"><span class="__cf_email__" data-cfemail="387a5d5a42410908785f55595154165b5755">bebzy10@gmail.com</span></a></p>
                 </div>
 
                 <div class="footer-section">
@@ -416,7 +400,7 @@
             });
         }
 
-        // ── Contact form ───────────────────────────────────────────
+        // ── Contact form — Formspree submission ────────────────────
         var form      = document.getElementById('contactForm');
         var formMsg   = document.getElementById('formMessage');
         var submitBtn = form ? form.querySelector('.submit-btn') : null;
@@ -446,21 +430,48 @@
                     return;
                 }
 
+                // Loading state
                 if (btnText)    btnText.style.display    = 'none';
                 if (btnIcon)    btnIcon.style.display    = 'none';
                 if (btnLoading) btnLoading.style.display = 'inline-flex';
                 submitBtn.disabled = true;
 
-                setTimeout(function () {
+                // Build form data for Formspree
+                var data = new FormData(form);
+
+                fetch('https://formspree.io/f/xbdazkko', {
+                    method: 'POST',
+                    body: data,
+                    headers: { 'Accept': 'application/json' }
+                })
+                .then(function (response) {
                     if (btnText)    btnText.style.display    = '';
                     if (btnIcon)    btnIcon.style.display    = '';
                     if (btnLoading) btnLoading.style.display = 'none';
                     submitBtn.disabled = false;
-                    formMsg.className = 'success';
-                    formMsg.textContent = "Thank you! Your message has been received. I'll be in touch within 24 hours.";
-                    form.reset();
-                    if (charCount) charCount.textContent = '0';
-                }, 1200);
+
+                    if (response.ok) {
+                        formMsg.className = 'success';
+                        formMsg.textContent = "Message sent! I'll be in touch within 24 hours.";
+                        form.reset();
+                        if (charCount) charCount.textContent = '0';
+                    } else {
+                        return response.json().then(function (data) {
+                            formMsg.className = 'error';
+                            formMsg.textContent = (data && data.errors)
+                                ? data.errors.map(function(e){ return e.message; }).join(', ')
+                                : 'Something went wrong. Please try again or email me directly.';
+                        });
+                    }
+                })
+                .catch(function () {
+                    if (btnText)    btnText.style.display    = '';
+                    if (btnIcon)    btnIcon.style.display    = '';
+                    if (btnLoading) btnLoading.style.display = 'none';
+                    submitBtn.disabled = false;
+                    formMsg.className = 'error';
+                    formMsg.textContent = 'Could not send message. Please email me directly at Bebzy10@gmail.com';
+                });
             });
         }
 
