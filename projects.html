@@ -499,63 +499,6 @@ const PROJECT_ARTICLES = {
     // ──────────────────────────────────────────────────────────────
     // PROJECT 3 — Iraqi Marshes Monitoring System
     // ──────────────────────────────────────────────────────────────
-    project3: {
-        title: "Iraqi Marshes Monitoring System",
-        tags: ["Remote Sensing", "Cartography"],
-        tools: "Remote Sensing, Python, ArcGIS Pro",
-        duration: "2 weeks",
-
-        heroImage: "images/2200.jpg",
-        heroAlt:   "Iraqi Marshes satellite imagery",
-
-        content: [
-            { type: "section-heading", value: "Project Overview" },
-            { type: "text", value: "This project developed a multi-temporal monitoring system to track changes in the Iraqi Marshlands, a UNESCO World Heritage Site, using Landsat and Sentinel-2 satellite imagery over a 30 year period (1994–2024). The system quantified marsh extent, vegetation health, and seasonal flooding dynamics." },
-
-            // ↓ Replace with study area / satellite overview image
-            { type: "image-full", src: "images/jhree.jpg", alt: "Iraqi Marshes study area overview",
-              caption: "Fig 1. Iraqi Marshlands study area — Landsat true colour composite (1994)" },
-
-            { type: "section-heading", value: "Satellite Imagery Analysis" },
-            { type: "text", value: "Landsat 8 and Sentinel-2 scenes were pre-processed using DOS1 atmospheric correction and Sen2Cor pipelines. NDVI and NDWI indices were derived to classify marsh, deep water, and arid land across time steps spanning the full monitoring period." },
-
-            // ↓ Replace with NDVI/NDWI classification maps (3 time periods)
-            { type: "image-grid-3",
-              images: [
-                { src: "images/hjgf.jpg", alt: "NDVI classification 1994" },
-                { src: "images/gggf.jpg", alt: "NDVI classification 2004" },
-                { src: "images/rewt.jpg", alt: "NDVI classification 2024" }
-              ],
-              caption: "Fig 2. NDVI classification of Iraqi Marshes — 1994, 2014, 2024" },
-
-            { type: "section-heading", value: "Methodology" },
-            { type: "list", items: [
-                "Acquired and pre-processed Landsat 8 and Sentinel-2 imagery, applying DOS1 and Sen2Cor atmospheric corrections.",
-                "Developed NDVI and NDWI change detection algorithms in Python to classify marsh, deep water, and arid land.",
-                "Performed time-series analysis to identify seasonal and inter-annual variability in marsh extent.",
-                "Validated results against field survey points and published hydrological records.",
-                "Designed an interactive change detection map series for reporting and dissemination."
-            ]},
-
-            // ↓ Replace with change detection output map
-            { type: "image-full", src: "images/ghf.jpg", alt: "Marsh extent change detection map 2004–2024",
-              caption: "Fig 3. Change detection map — marsh extent loss and recovery (2004–2024)" },
-
-            { type: "section-heading", value: "Key Outcomes" },
-            { type: "list", items: [
-                "Detected a 22% reduction in permanent marsh area between 2004 and 2018, with partial recovery by 2022.",
-                "Produced classified raster layers covering the full 30 year monitoring period.",
-                "Developed a reusable model for ongoing automated monitoring.",
-                "Generated annual NDVI trend charts highlighting vegetation stress periods."
-            ]},
-
-            // ↓ Replace with time-series chart / annual trend graph
-            { type: "image-placeholder", label: "NDVI time-series chart / annual trend graph" },
-
-            { type: "section-heading", value: "Conclusion" },
-            { type: "text", value: "The Iraqi Marshes monitoring system demonstrated scalable remote sensing workflows for environmental change detection. Results aligned closely with field-based studies and provided actionable insights for conservation and water resource management bodies." }
-        ]
-    },
 
     // ──────────────────────────────────────────────────────────────
     // PROJECT 4 — Ghana Lands Commission Digital Plan Proposal
